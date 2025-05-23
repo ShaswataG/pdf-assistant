@@ -11,16 +11,17 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:5174",
     # add other origins you want to allow
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=origins,         # or ["*"] to allow all origins (not recommended for production)
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],           # allow all methods like GET, POST, etc.
-    allow_headers=["*"],           # allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/documents")
