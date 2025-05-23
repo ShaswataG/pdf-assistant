@@ -53,6 +53,9 @@ async def ask_question(request: Request):
         print('doc not found')
         raise HTTPException(status_code=404, detail="Document not found")
 
+    # Store the user's question and get the inserted chat entry
+    user_chat = add_chat(doc_id, None, question, is_user_message=True)
+
     if stream:
         print('stream', stream)
         async def token_generator():
@@ -62,4 +65,11 @@ async def ask_question(request: Request):
     else:
         print('stream not found')
         answer = get_answer_once(doc_id, doc["content"], question)
-        return {"answer": answer}
+        # Store the AI's response and get the inserted chat entry
+        ai_chat = add_chat(doc_id, None, answer, is_user_message=False)
+        return {"answer": answer, "user_chat": user_chat, "ai_chat": ai_chat}
+
+@app.get("/chats/{doc_id}")
+async def get_chats(doc_id: str):
+    chats = get_chats_by_document(doc_id)
+    return {"chats": chats}

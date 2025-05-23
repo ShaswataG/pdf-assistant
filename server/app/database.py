@@ -15,9 +15,58 @@ def create_tables():
                 content TEXT NOT NULL
             )
         """)
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS chats (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                doc_id TEXT NOT NULL,
+                user_id TEXT,  -- Optional, for future use
+                content TEXT NOT NULL,
+                is_user_message BOOLEAN NOT NULL,  -- True for user, False for AI
+                timestamp TEXT NOT NULL,
+                FOREIGN KEY (doc_id) REFERENCES documents(id)
+            )
+        """)
         conn.commit()
 
-def add_document(doc_id: str, filename: str, content: str) -> None:
+def add_chat(doc_id: str, user_id: Optional[str], content: str, is_user_message: bool) -> Dict:
+    timestamp = datetime.utcnow().isoformat()
+    with sqlite3.connect(DB_FILE) as conn:
+        c = conn.cursor()
+        c.execute(
+            "INSERT INTO chats (doc_id, user_id, content, is_user_message, timestamp) VALUES (?, ?, ?, ?, ?)",
+            (doc_id, user_id, content, is_user_message, timestamp)
+        )
+        # Get the ID of the newly inserted row
+        chat_id = c.lastrowid
+        conn.commit()
+        # Return the newly inserted chat entry
+        return {
+            "id": chat_id,
+            "doc_id": doc_id,
+            "user_id": user_id,
+            "content": content,
+            "is_user_message": is_user_message,
+            "timestamp": timestamp,
+        }
+
+def get_chats_by_document(doc_id: str) -> List[Dict]:
+    with sqlite3.connect(DB_FILE) as conn:
+        c = conn.cursor()
+        c.execute("SELECT id, doc_id, user_id, content, is_user_message, timestamp FROM chats WHERE doc_id = ?", (doc_id,))
+        rows = c.fetchall()
+        return [
+            {
+                "id": row[0],
+                "doc_id": row[1],
+                "user_id": row[2],
+                "content": row[3],
+                "is_user_message": bool(row[4]),
+                "timestamp": row[5],
+            }
+            for row in rows
+        ]
+
+def add_document(doc_id: str, filename: str, content: str) -> Dict:
     upload_date = datetime.utcnow().isoformat()
     with sqlite3.connect(DB_FILE) as conn:
         c = conn.cursor()
