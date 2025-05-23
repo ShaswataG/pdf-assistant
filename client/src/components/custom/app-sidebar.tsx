@@ -47,7 +47,7 @@ export function AppSidebar() {
   const { documentsByUser:items } = useDocumentStore()
 
   return (
-    <Sidebar>
+    <Sidebar className="z-100">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Documents</SidebarGroupLabel>
