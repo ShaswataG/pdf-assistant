@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Button } from '../ui/button';
-import { Loader2 } from 'lucide-react'; // Spinner icon
+import { Loader2, CirclePlus } from 'lucide-react'; // Spinner icon
 import { useNavigate } from 'react-router-dom';
 import { useDocumentStore } from '@/stores/documentStore';
 
@@ -42,7 +42,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="flex justify-around items-center py-[20px] fixed top-0 w-full">
+    <nav className="flex justify-end items-center px-[40px] py-[20px] fixed top-0 w-full">
       <input
         type="file"
         ref={fileInputRef}
@@ -50,14 +50,17 @@ export default function Navbar() {
         className="hidden"
         accept=".pdf" // optional: restrict file types
       />
-      <Button onClick={handleFileClick} disabled={isUploading}>
+      <Button onClick={handleFileClick} disabled={isUploading} className='border-2 border-primary  text-primary bg-white hover:bg-gray-200'>
         {isUploading ? (
           <>
             <Loader2 className="animate-spin mr-2 h-4 w-4" />
             Uploading...
           </>
         ) : (
-          'Upload New Document'
+          <>
+            <CirclePlus color="#000000" />
+            Upload PDF
+          </>
         )}
       </Button>
     </nav>
