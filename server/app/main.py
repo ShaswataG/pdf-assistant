@@ -49,22 +49,22 @@ async def ask_question(request: Request):
     question = body.get("question")
     stream = body.get("stream", False)
     doc = get_document(doc_id)
-    print('doc', doc)
+    # print('doc', doc)
     if not doc:
-        print('doc not found')
+        # print('doc not found')
         raise HTTPException(status_code=404, detail="Document not found")
 
     # Store the user's question and get the inserted chat entry
     user_chat = add_chat(doc_id, None, question, is_user_message=True)
 
     if stream:
-        print('stream', stream)
+        # print('stream', stream)
         async def token_generator():
             async for chunk in get_answer_stream(doc_id, doc["content"], question):
                 yield chunk
         return StreamingResponse(token_generator(), media_type="text/plain")
     else:
-        print('stream not found')
+        # print('stream not found')
         answer = get_answer_once(doc_id, doc["content"], question)
         # Store the AI's response and get the inserted chat entry
         ai_chat = add_chat(doc_id, None, answer, is_user_message=False)

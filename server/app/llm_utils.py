@@ -39,7 +39,7 @@ index_cache = {}
 # === 1. Build index from PDF text ===
 def build_index_from_text(document_id: str, document_text: str):
     # Create index for the text using LlamaIndex
-    print('building index')
+    # print('building index')
 
     together_llm = TogetherLLM(
         api_key=TOGETHER_API_KEY,
@@ -60,7 +60,7 @@ def build_index_from_text(document_id: str, document_text: str):
         documents,
         service_context=service_context
     )
-    print('index built')
+    # print('index built')
     index_cache[document_id] = index
     return index
 
@@ -125,18 +125,18 @@ class MyAsyncHandler(AsyncCallbackHandler):
 # === 5. LangChain LLM call (streaming) ===
 async def get_answer_stream(document_id: str, document_text: str, question: str) -> AsyncGenerator[str, None]:
     # Build or retrieve index
-    print('document_id', document_id)
+    # print('document_id', document_id)
     if document_id not in index_cache:
         build_index_from_text(document_id, document_text)
-    print('index built')
+    # print('index built')
     # Get context
     context = get_context_from_index(document_id, question)
-    print('context', context)
+    # print('context', context)
 
     # LangChain Streaming
     handler = MyAsyncHandler()
     manager = AsyncCallbackManager([handler])
-    print('manager', manager)
+    # print('manager', manager)
     llm = TogetherLLM(
         api_key=TOGETHER_API_KEY,
         model="mistralai/Mistral-7B-Instruct-v0.1",
