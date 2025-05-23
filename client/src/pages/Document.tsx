@@ -98,14 +98,14 @@ export default function Document() {
                 <div ref={chatEndRef} />
             </div>
 
-            <div className="flex items-center justify-between gap-2 border-t pt-2">
+            <div className="flex items-center justify-between gap-2 border-t pt-2 px-2 max-w-full border rounded-md">
                 <Textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Type your message..."
-                    className="flex-1 resize-none"
+                    placeholder="Send a message..."
+                    className="flex-1 resize-none max-w-full border-none outline-none focus-visible:border-none focus-visible:ring-0 p-2"
                 />
-                <Button onClick={handleSend} disabled={isSending}>
+                <Button onClick={handleSend} disabled={isSending} className={`p-2 rounded-md ${isSending ? 'bg-gray-200' : 'bg-white'} hover:bg-white hover:scale-1.5`}>
                     {
                         isSending ? (
                             <>
@@ -113,7 +113,8 @@ export default function Document() {
                             </>
                         ) : (
                             <>
-                                <Send />
+                                {/* <Send /> */}
+                                <SendHorizontal color="#000000" className="bg-transparent" />
                             </>
                         )}
                 </Button>
