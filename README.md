@@ -62,9 +62,9 @@ uvicorn app.main:app --reload
 
 ### The API will be available at: http://localhost:8000
 
-# API Documentation
+## API Documentation
 
-## 1. Get List of Documents
+### 1. Get List of Documents
 
 - **Endpoint:** `GET /documents`
 - **Description:** Returns a list of all uploaded documents with metadata.
@@ -81,7 +81,7 @@ uvicorn app.main:app --reload
     ]
   }
   ```
-## 2. Upload PDF Document
+### 2. Upload PDF Document
 
 - **Endpoint:** POST /upload
 
@@ -102,7 +102,7 @@ uvicorn app.main:app --reload
 - **Errors:**
 400 Bad Request if file is not a PDF or extraction fails.
 
-## 3. Ask a Question About a Document
+### 3. Ask a Question About a Document
 
 - **Endpoint:** POST /ask
 
@@ -144,7 +144,7 @@ Returns a stream of text chunks as the AI generates the answer.
 - **Errors:**
 404 Not Found if the document ID does not exist.
 
-## 4. Retrieve Chat History for a Document
+### 4. Retrieve Chat History for a Document
 
 - **Endpoint:** GET /chats/{doc_id}
 
