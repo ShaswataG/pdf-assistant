@@ -2,7 +2,7 @@ import uuid
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import add_document, get_document
+from app.database import add_document, get_document, list_documents, add_chat, get_chats_by_document
 from app.pdf_utils import extract_text_from_pdf
 from app.llm_utils import get_answer_once, get_answer_stream
 
@@ -23,6 +23,11 @@ app.add_middleware(
     allow_headers=["*"],           # allow all headers
 )
 
+@app.get("/documents")
+async def getDocuments():
+    documents = list_documents()
+    return {"documents": documents}
+
 @app.post("/upload")
 async def upload_pdf(file: UploadFile = File(...)):
     if file.content_type != "application/pdf":
@@ -33,8 +38,8 @@ async def upload_pdf(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Failed to extract text from PDF.")
     
     doc_id = str(uuid.uuid4())
-    add_document(doc_id, file.filename, text_content)
-    return {"doc_id": doc_id, "filename": file.filename}
+    new_document = add_document(doc_id, file.filename, text_content)
+    return {"id": doc_id, "filename": file.filename, "upload_date": new_document["upload_date"], "content": text_content}
 
 @app.post("/ask")
 async def ask_question(request: Request):

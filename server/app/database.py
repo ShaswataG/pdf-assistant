@@ -25,7 +25,15 @@ def add_document(doc_id: str, filename: str, content: str) -> None:
             "INSERT INTO documents (id, filename, upload_date, content) VALUES (?, ?, ?, ?)",
             (doc_id, filename, upload_date, content)
         )
+        # Get the ID of the newly inserted row
+        doc_id = c.lastrowid
         conn.commit()
+        return {
+            "id": doc_id,
+            "filename": filename,
+            "upload_date": upload_date,
+            "content": content,
+        }
 
 def get_document(doc_id: str) -> Optional[Dict]:
     with sqlite3.connect(DB_FILE) as conn:
