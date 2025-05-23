@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Send, SendHorizontal, RotateCcw, Loader2 } from 'lucide-react';
 import { useChatStore } from "@/stores/chatStore";
 import { useEffect, useState, useRef } from "react";
+import userLogo from "@/assets/userLogo.png"
+import botLogo from "@/assets/botLogo.png"
 
 export default function Document() {
     const [isSending, setIsSending] = useState(false)
@@ -50,7 +52,7 @@ export default function Document() {
 
     return (
         <div className="w-full h-full max-h-[84vh] flex flex-col justify-between p-4 relative top-[80px]">
-            <div className="flex-1 overflow-y-auto space-y-2 mb-4 pr-2">
+            <div className="flex flex-col gap-2 overflow-y-auto space-y-2 mb-4 pr-2">
                 {
                 chats.length === 0
                 &&
@@ -59,13 +61,13 @@ export default function Document() {
                 {chats.map((chat) => (
                     <div
                         key={chat.id || chat.clientId}
-                        className={`flex ${chat.isUserMessage ? "justify-end" : "justify-start"}`}
-                    >
+                        className="flex justify-start gap-6 p-2"
+                    >   
+                        <div className="w-[36px] h-[36px]">
+                            <img src={chat.isUserMessage === true ? userLogo : botLogo} alt="user logo"/>
+                        </div>
                         <div
-                            className={`rounded-lg p-2 max-w-sm text-sm shadow-md ${chat.isUserMessage
-                                    ? "bg-blue-100 text-right"
-                                    : "bg-gray-100 text-left"
-                                }`}
+                            className={`rounded-lg w-2xl text-sm text-left`}
                         >
                             <p>{chat.content}</p>
                             {chat.isUserMessage && chat.status === "failed" && (
