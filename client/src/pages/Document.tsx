@@ -1,7 +1,7 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button";
-import { Send, RotateCcw, Loader2 } from 'lucide-react';
+import { Send, SendHorizontal, RotateCcw, Loader2 } from 'lucide-react';
 import { useChatStore } from "@/stores/chatStore";
 import { useEffect, useState, useRef } from "react";
 
@@ -9,6 +9,7 @@ export default function Document() {
     const [isSending, setIsSending] = useState(false)
 
     const { docId } = useParams();
+    const navigate = useNavigate();
 
     const { chatsByDoc, fetchChats, sendChat, retryChat } = useChatStore()
 
@@ -18,7 +19,6 @@ export default function Document() {
     const chats = docId ? chatsByDoc[docId] || [] : [];
 
     const handleSend = async () => {
-
         setIsSending(true)
 
         try {
@@ -26,7 +26,7 @@ export default function Document() {
                 await sendChat(docId, message)
             }
         } catch (error) {
-
+            console.error("Failed to send chat:", error);
         } finally {
             setIsSending(false)
             setMessage('')
@@ -34,10 +34,10 @@ export default function Document() {
     }
 
     useEffect(() => {
-        if (docId) {
-            fetchChats(docId || "")
+        if (docId && docId !== "new") {
+            fetchChats(docId);
         }
-    }, [])
+    }, [docId, fetchChats]);
 
     useEffect(() => {
         if (docId)
@@ -51,6 +51,11 @@ export default function Document() {
     return (
         <div className="w-full h-full max-h-[84vh] flex flex-col justify-between p-4 relative top-[80px]">
             <div className="flex-1 overflow-y-auto space-y-2 mb-4 pr-2">
+                {
+                chats.length === 0
+                &&
+                <p className="text-muted-foreground">No chats found</p>    
+                }
                 {chats.map((chat) => (
                     <div
                         key={chat.id || chat.clientId}
