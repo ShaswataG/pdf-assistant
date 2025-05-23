@@ -43,7 +43,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="flex justify-around items-center px-[40px] py-[20px] fixed top-0 w-full">
+    <nav className="flex justify-around items-center px-[40px] py-[20px] fixed top-0 w-full" style={{ boxShadow: "0px 3px 10px 0px rgba(0,0,0,0.26)" }}>
       <img src={navbarLogo} alt="navbar logo" />
       <input
         type="file"
