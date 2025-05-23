@@ -35,6 +35,13 @@ export default function Document() {
         }
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
+        }
+    }
+
     useEffect(() => {
         if (docId && docId !== "new") {
             fetchChats(docId);
@@ -104,6 +111,7 @@ export default function Document() {
                 <Textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder="Send a message..."
                     className="flex-1 resize-none max-w-full border-none outline-none focus-visible:border-none focus-visible:ring-0 p-2"
                 />
