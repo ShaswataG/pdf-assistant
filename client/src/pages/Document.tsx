@@ -119,7 +119,7 @@ export default function Document() {
                     {
                         isSending ? (
                             <>
-                                <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                                <Loader2 color="#000000" className="animate-spin mr-2 h-4 w-4" />
                             </>
                         ) : (
                             <>
