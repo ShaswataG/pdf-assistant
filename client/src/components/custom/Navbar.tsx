@@ -3,6 +3,7 @@ import { Button } from '../ui/button';
 import { Loader2, CirclePlus } from 'lucide-react'; // Spinner icon
 import { useNavigate } from 'react-router-dom';
 import { useDocumentStore } from '@/stores/documentStore';
+import navbarLogo from "@/assets/navbarLogo.png";
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -42,7 +43,8 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="flex justify-end items-center px-[40px] py-[20px] fixed top-0 w-full">
+    <nav className="flex justify-around items-center px-[40px] py-[20px] fixed top-0 w-full">
+      <img src={navbarLogo} alt="navbar logo" />
       <input
         type="file"
         ref={fileInputRef}
