@@ -1,14 +1,39 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './App.css' 
 import Layout from './components/layout/document';
 import DocumentPage from './pages/Document';
 import Navbar from './components/custom/Navbar';
+import { useDocumentStore } from './stores/documentStore';
+import { useEffect, useState } from 'react';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { documentsByUser, getDocuments } = useDocumentStore();
+  const [redirectPath, setRedirectPath] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch documents on initial load
+    const fetchData = async () => {
+      await getDocuments();
+      setIsLoading(false);
+    };
+    fetchData();
+  }, [getDocuments]);
+
+  useEffect(() => {
+    // Determine the redirect path based on documentsByUser
+    if (!isLoading) {
+      if (documentsByUser.length > 0) {
+        setRedirectPath(`/document/${documentsByUser[0].id}`);
+      } else {
+        setRedirectPath('/document/new');
+      }
+    }
+  }, [documentsByUser, isLoading]);
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Show a loading indicator while fetching data
+  }
 
   return (
     <Router>
@@ -17,30 +42,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={
-              <>
-                <div>
-                  <a href="https://vite.dev" target="_blank">
-                    <img src={viteLogo} className="logo" alt="Vite logo" />
-                  </a>
-                  <a href="https://react.dev" target="_blank">
-                    <img src={reactLogo} className="logo react" alt="React logo" />
-                  </a>
-                </div>
-                <h1>Vite + React</h1>
-                <div className="card">
-                  <button onClick={() => setCount((count) => count + 1)}>
-                    count is {count}
-                  </button>
-                  <p>
-                    Edit <code>src/App.tsx</code> and save to test HMR
-                  </p>
-                </div>
-                <p className="read-the-docs text-white">
-                  Click on the Vite and React logos to learn more
-                </p>
-              </>
-            }
+            element={redirectPath ? <Navigate to={redirectPath} replace /> : null}
           />
           <Route
             path="/document/:docId"

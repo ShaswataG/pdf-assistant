@@ -2,14 +2,15 @@ import { useEffect } from "react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/custom/app-sidebar"
 import { useDocumentStore } from "@/stores/documentStore"
-import axios from "@/api/axiosInstance";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   
-  const { getDocuments } = useDocumentStore()
+  const { documentsByUser, getDocuments } = useDocumentStore()
 
   useEffect(() => {
-    getDocuments()
+    if (documentsByUser?.length === 0) {
+      getDocuments()
+    }
   }, [])
 
   return (
