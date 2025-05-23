@@ -2,7 +2,7 @@ import sqlite3
 from datetime import datetime
 from typing import Optional, List, Dict
 
-DB_FILE = "documents.db"
+DB_FILE = "database.db"
 
 def create_tables():
     with sqlite3.connect(DB_FILE) as conn:
