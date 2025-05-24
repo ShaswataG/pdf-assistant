@@ -1,4 +1,5 @@
 import os
+import requests
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -21,6 +22,9 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_core.callbacks.base import AsyncCallbackHandler
 from langchain_core.callbacks.manager import AsyncCallbackManager
+
+from app.database import get_document
+from app.pdf_utils import extract_text_from_pdf
 
 # Use the same OpenAI API key
 # OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -78,14 +82,28 @@ def get_context_from_index(document_id: str, question: str) -> str:
 
 # === 3. LangChain prompt-based LLM call (non-streaming) ===
 def get_answer_once(document_id: str, question: str) -> str:
-    # Build or retrieve index
-    # print('get_answer_once')
-    # print('document_id: ', document_id)
-    # print('question: ', question)
+    # Check if index exists in cache
+    index = index_cache.get(document_id)
+    if not index:
+        # Fetch document from database
+        doc = get_document(document_id)
+        if not doc:
+            raise ValueError("Document not found in database.")
+        
+        # Download PDF from Cloudinary URL
+        response = requests.get(doc["cloudinary_url"])
+        if response.status_code != 200:
+            raise ValueError("Failed to download PDF from Cloudinary.")
+        
+        # Extract text from PDF
+        text_content = extract_text_from_pdf(response.content)
+        
+        # Vectorize the text and store in cache
+        index = build_index_from_text(document_id, text_content)
+        index_cache[document_id] = index
 
     # Get context
     context = get_context_from_index(document_id, question)
-
 
     llm = TogetherLLM(
         api_key=TOGETHER_API_KEY,
@@ -121,12 +139,28 @@ class MyAsyncHandler(AsyncCallbackHandler):
 
 # === 5. LangChain LLM call (streaming) ===
 async def get_answer_stream(document_id: str, question: str) -> AsyncGenerator[str, None]:
-    # Build or retrieve index
-    # print('document_id', document_id)
+    # Check if index exists in cache
+    index = index_cache.get(document_id)
+    if not index:
+        # Fetch document from database
+        doc = get_document(document_id)
+        if not doc:
+            raise ValueError("Document not found in database.")
+        
+        # Download PDF from Cloudinary URL
+        response = requests.get(doc["cloudinary_url"])
+        if response.status_code != 200:
+            raise ValueError("Failed to download PDF from Cloudinary.")
+        
+        # Extract text from PDF
+        text_content = extract_text_from_pdf(response.content)
+        
+        # Vectorize the text and store in cache
+        index = build_index_from_text(document_id, text_content)
+        index_cache[document_id] = index
 
     # Get context
     context = get_context_from_index(document_id, question)
-    # print('context', context)
 
     # LangChain Streaming
     handler = MyAsyncHandler()
