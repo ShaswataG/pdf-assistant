@@ -1,7 +1,7 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button";
-import { Send, SendHorizontal, RotateCcw, Loader2 } from 'lucide-react';
+import { SendHorizontal, RotateCcw, Loader2 } from 'lucide-react';
 import { useChatStore } from "@/stores/chatStore";
 import { useEffect, useState, useRef } from "react";
 import userLogo from "@/assets/userLogo.png"
@@ -11,7 +11,6 @@ export default function Document() {
     const [isSending, setIsSending] = useState(false)
 
     const { docId } = useParams();
-    const navigate = useNavigate();
 
     const { chatsByDoc, fetchChats, sendChat, retryChat } = useChatStore()
 
