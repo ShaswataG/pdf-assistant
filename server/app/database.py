@@ -12,7 +12,7 @@ def create_tables():
                 id TEXT PRIMARY KEY,
                 filename TEXT NOT NULL,
                 upload_date TEXT NOT NULL,
-                content TEXT NOT NULL
+                cloudinary_url TEXT NOT NULL
             )
         """)
         c.execute("""
@@ -66,35 +66,33 @@ def get_chats_by_document(doc_id: str) -> List[Dict]:
             for row in rows
         ]
 
-def add_document(doc_id: str, filename: str, content: str) -> Dict:
+def add_document(doc_id: str, filename: str, cloudinary_url: str) -> Dict:
     upload_date = datetime.utcnow().isoformat()
     with sqlite3.connect(DB_FILE) as conn:
         c = conn.cursor()
         c.execute(
-            "INSERT INTO documents (id, filename, upload_date, content) VALUES (?, ?, ?, ?)",
-            (doc_id, filename, upload_date, content)
+            "INSERT INTO documents (id, filename, upload_date, cloudinary_url) VALUES (?, ?, ?, ?)",
+            (doc_id, filename, upload_date, cloudinary_url)
         )
-        # Get the ID of the newly inserted row
-        doc_id = c.lastrowid
         conn.commit()
         return {
             "id": doc_id,
             "filename": filename,
             "upload_date": upload_date,
-            "content": content,
+            "cloudinary_url": cloudinary_url,
         }
 
 def get_document(doc_id: str) -> Optional[Dict]:
     with sqlite3.connect(DB_FILE) as conn:
         c = conn.cursor()
-        c.execute("SELECT id, filename, upload_date, content FROM documents WHERE id = ?", (doc_id,))
+        c.execute("SELECT id, filename, upload_date, cloudinary_url FROM documents WHERE id = ?", (doc_id,))
         row = c.fetchone()
         if row:
             return {
                 "id": row[0],
                 "filename": row[1],
                 "upload_date": row[2],
-                "content": row[3]
+                "cloudinary_url": row[3]
             }
         return None
 

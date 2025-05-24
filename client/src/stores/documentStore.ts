@@ -74,7 +74,7 @@ export const useDocumentStore = create<DocumentStore>()(
                     id: response?.data?.id,
                     filename: response?.data?.filename,
                     uploadDate: response?.data?.upload_date,
-                    content: response?.data?.content
+                    url: response?.data?.cloudinary_url
                 }
                 get().addDocument(newDocument)
 

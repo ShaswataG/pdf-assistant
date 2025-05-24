@@ -4,7 +4,10 @@ from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import add_document, get_document, list_documents, add_chat, get_chats_by_document
 from app.pdf_utils import extract_text_from_pdf
-from app.llm_utils import get_answer_once, get_answer_stream
+from app.llm_utils import get_answer_once, get_answer_stream, build_index_from_text
+import uuid
+import cloudinary.uploader
+from datetime import datetime
 
 app = FastAPI()
 
@@ -34,13 +37,46 @@ async def upload_pdf(file: UploadFile = File(...)):
     if file.content_type != "application/pdf":
         raise HTTPException(status_code=400, detail="Only PDF files are supported.")
     file_bytes = await file.read()
-    text_content = extract_text_from_pdf(file_bytes)
+
+    # Upload to Cloudinary in specific folder with timestamp in filename
+    try:
+        original_filename = file.filename.rsplit(".", 1)[0]  # strip .pdf extension
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        public_id = f"{original_filename}_{timestamp}"
+
+        upload_result = cloudinary.uploader.upload(
+            file_bytes,
+            resource_type="raw",
+            folder="pdf-assistant/documents",
+            public_id=public_id
+        )
+        cloudinary_url = upload_result["secure_url"]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Cloudinary upload failed: {str(e)}")
+
+    # Extract text
+    try:
+        text_content = extract_text_from_pdf(file_bytes)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"PDF text extraction failed: {str(e)}")
+    
     if not text_content.strip():
         raise HTTPException(status_code=400, detail="Failed to extract text from PDF.")
     
+    # Vectorize
     doc_id = str(uuid.uuid4())
-    new_document = add_document(doc_id, file.filename, text_content)
-    return {"id": doc_id, "filename": file.filename, "upload_date": new_document["upload_date"], "content": text_content}
+    try:
+        build_index_from_text(doc_id, text_content)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Vectorization failed: {str(e)}")
+    
+    new_document = add_document(doc_id, file.filename, cloudinary_url)
+    return {
+        "id": doc_id,
+        "filename": file.filename,
+        "upload_date": new_document["upload_date"],
+        "cloudinary_url": cloudinary_url
+    }
 
 @app.post("/ask")
 async def ask_question(request: Request):
@@ -48,6 +84,7 @@ async def ask_question(request: Request):
     doc_id = body.get("doc_id")
     question = body.get("question")
     stream = body.get("stream", False)
+
     doc = get_document(doc_id)
     # print('doc', doc)
     if not doc:
@@ -60,12 +97,12 @@ async def ask_question(request: Request):
     if stream:
         # print('stream', stream)
         async def token_generator():
-            async for chunk in get_answer_stream(doc_id, doc["content"], question):
+            async for chunk in get_answer_stream(doc_id, question):
                 yield chunk
         return StreamingResponse(token_generator(), media_type="text/plain")
     else:
         # print('stream not found')
-        answer = get_answer_once(doc_id, doc["content"], question)
+        answer = get_answer_once(doc_id, question)
         # Store the AI's response and get the inserted chat entry
         ai_chat = add_chat(doc_id, None, answer, is_user_message=False)
         return {"answer": answer, "user_chat": user_chat, "ai_chat": ai_chat}

@@ -77,15 +77,12 @@ def get_context_from_index(document_id: str, question: str) -> str:
 
 
 # === 3. LangChain prompt-based LLM call (non-streaming) ===
-def get_answer_once(document_id: str, document_text: str, question: str) -> str:
+def get_answer_once(document_id: str, question: str) -> str:
     # Build or retrieve index
     # print('get_answer_once')
     # print('document_id: ', document_id)
-    # print('document_text: ', document_text)
     # print('question: ', question)
-    if document_id not in index_cache:
-        # print('document_id not in index_cache')
-        build_index_from_text(document_id, document_text)
+
     # Get context
     context = get_context_from_index(document_id, question)
 
@@ -123,20 +120,17 @@ class MyAsyncHandler(AsyncCallbackHandler):
 
 
 # === 5. LangChain LLM call (streaming) ===
-async def get_answer_stream(document_id: str, document_text: str, question: str) -> AsyncGenerator[str, None]:
+async def get_answer_stream(document_id: str, question: str) -> AsyncGenerator[str, None]:
     # Build or retrieve index
     # print('document_id', document_id)
-    if document_id not in index_cache:
-        build_index_from_text(document_id, document_text)
-    # print('index built')
+
     # Get context
     context = get_context_from_index(document_id, question)
     # print('context', context)
 
     # LangChain Streaming
     handler = MyAsyncHandler()
-    manager = AsyncCallbackManager([handler])
-    # print('manager', manager)
+    AsyncCallbackManager([handler])
     llm = TogetherLLM(
         api_key=TOGETHER_API_KEY,
         model="mistralai/Mistral-7B-Instruct-v0.1",
