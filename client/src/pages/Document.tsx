@@ -105,8 +105,7 @@ export default function Document() {
                 ))}
                 <div ref={chatEndRef} />
             </div>
-
-            <div className="flex items-center justify-between gap-2 border-t pt-2 px-2 max-w-full border rounded-md">
+            <div className="flex items-center justify-between gap-2 border-t pt-2 px-2 max-w-full border rounded-md fixed bottom-0 bg-[white] w-3/4 mb-4">
                 <Textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
