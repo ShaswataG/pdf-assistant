@@ -1,31 +1,34 @@
-# PDF Q&A FastAPI Application
+# PDF Q&A Application (FastAPI + Vite Frontend)
 
 ## Overview
 
-This application provides a backend API for uploading PDF documents, extracting their text, storing them in a database, and enabling users to ask questions about the content of these PDFs using a large language model (LLM). The app supports both non-streaming and streaming responses from the LLM and maintains a chat history for each document.
+This full-stack application allows users to upload PDF documents, extract their text, and ask questions about the content using a large language model (LLM). It supports chat history, document indexing, and LLM response.
 
 ---
 
 ## Architecture Overview
 
-- **FastAPI**: Serves as the web framework handling API endpoints.
-- **SQLite**: Used as the database to store documents and chat messages.
+- **Frontend**: Vite + React + TailwindCSS + **shadcn/ui** for a modern, component-driven UI
+- **Backend**: FastAPI for serving REST APIs
+- **PDF Storage**: Uploaded PDFs are stored in **Cloudinary**
 - **PDF Processing**: Utilizes PyMuPDF (`fitz`) to extract text from uploaded PDFs.
-- **LLM Integration**: Uses the `TogetherLLM` model via LlamaIndex for answering questions.
-- **Indexing**: Each document's text is indexed using LlamaIndex’s `VectorStoreIndex` for fast retrieval of relevant context.
-- **Chat History**: User questions and AI answers are stored in the database and retrievable by document.
-- **CORS Middleware**: Allows cross-origin requests from specific frontend origins.
+- **Database**: Metadata about PDFs and chat messages are stored in **SQLite**
+- **LLM Integration**: `TogetherLLM` used via LlamaIndex for Q&A
+- **Vector Indexing**: LlamaIndex’s `VectorStoreIndex` indexes text for contextual search
+- **Chat History**: User questions and AI answers are stored and linked to each document
+- **CORS**: Configured to allow frontend communication with the backend
 
 ---
 
-## Setup Instructions
+## Backend Setup Instructions (FastAPI)
 
 ### Prerequisites
 
 - Python 3.8+
 - [Poetry](https://python-poetry.org/) or `pip` for dependency management
-- SQLite (comes bundled with Python)
+- SQLite
 - API key for TogetherAI (`TOGETHER_API_KEY`)
+- Cloudinary credentials (`CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`)
 
 ### Installation
 
@@ -34,33 +37,72 @@ This application provides a backend API for uploading PDF documents, extracting 
     git clone https://github.com/ShaswataG/pdf-assistant.git
     cd pdf-assistant
     ```
-
-2. Create and activate a virtual environment (optional but recommended):
+    
+2. Navigate to the server directory:
     ```bash
-    python -m venv venv
-    source venv/bin/activate   # On Windows(powershell): .venv\Scripts\Activate.ps1
+    cd server
     ```
 
-3. Install dependencies:
+3. Create a virtual environment:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate   # On Windows: .venv\Scripts\Activate.ps1
+    ```
+
+4. Install dependencies:
     ```bash
     pip install -r requirements.txt
     ```
 
-4. Create a `.env` file in the directory "/server" and add your TogetherAI API key:
+5. Create a `.env` file in the `/server` directory with the following:
     ```
     TOGETHER_API_KEY=your_together_ai_api_key_here
+    CLOUDINARY_CLOUD_NAME=your_cloud_name
+    CLOUDINARY_API_KEY=your_api_key
+    CLOUDINARY_API_SECRET=your_api_secret
     ```
 
-5. (Optional) Ensure `documents.db` SQLite database is created automatically on first run (handled by the app).
+6. Run the backend:
+    ```bash
+    uvicorn app.main:app --reload
+    ```
 
-### Running the Application
+7. API will be available at: [http://localhost:8000](http://localhost:8000)
 
-```bash
-uvicorn app.main:app --reload
-```
+---
 
+## Frontend Setup Instructions (Vite + React + TailwindCSS + shadcn/ui)
 
-### The API will be available at: http://localhost:8000
+### Prerequisites
+
+- Node.js (v16+ recommended)
+- pnpm / yarn / npm
+
+### Installation
+
+1. Navigate to the client directory:
+    ```bash
+    cd client
+    ```
+
+2. Install dependencies:
+    ```bash
+    npm install
+    ```
+
+3. Create a `.env` file in the root of the client directory:
+    ```
+    VITE_API_URL=http://localhost:8000
+    ```
+
+4. Start the development server:
+    ```bash
+    npm run dev
+    ```
+
+5. Frontend will be available at: [http://localhost:5173](http://localhost:5173)
+
+---
 
 ## API Documentation
 
@@ -96,7 +138,7 @@ uvicorn app.main:app --reload
     "id": "generated-uuid",
     "filename": "uploaded_file.pdf",
     "upload_date": "2023-01-01T12:00:00Z",
-    "content": "Extracted text content from the PDF..."
+    "cloudinary_url": "https://res.cloudinary.com/..."
   }
   ```
 - **Errors:**
@@ -112,10 +154,9 @@ uvicorn app.main:app --reload
   ```json
   {
     "doc_id": "document-uuid",
-    "question": "Your question here",
-    "stream": false    // Optional boolean, if true returns streaming response
+    "question": "Your question here"
   }
-- **Response (Non-Streaming):**
+- **Response:**
 
   ```json
   {
@@ -138,8 +179,6 @@ uvicorn app.main:app --reload
     }
   }
   ```
-- **Response (Streaming):**
-Returns a stream of text chunks as the AI generates the answer.
 
 - **Errors:**
 404 Not Found if the document ID does not exist.
@@ -178,8 +217,6 @@ Returns a stream of text chunks as the AI generates the answer.
 
 ## Notes
 - All timestamps are in UTC and ISO 8601 format.
-
-- The stream parameter in /ask is optional; by default, responses are non-streaming.
 
 - Uploaded PDFs are stored with a unique UUID.
 
