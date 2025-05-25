@@ -69,26 +69,34 @@ async def upload_pdf(file: UploadFile = File(...)):
             public_id=public_id
         )
         cloudinary_url = upload_result["secure_url"]
+        logger.info("File uploaded to cloudinary")
     except Exception as e:
+        logger.error("Cloudinary upload failed")
         raise HTTPException(status_code=500, detail=f"Cloudinary upload failed: {str(e)}")
 
     # Extract text
     try:
         text_content = extract_text_from_pdf(file_bytes)
+        logger.info("Text content extracted")
     except Exception as e:
+        logger.error("PDF text extraction failed")
         raise HTTPException(status_code=500, detail=f"PDF text extraction failed: {str(e)}")
     
     if not text_content.strip():
+        logger.error("Failed to extract text from PDF.")
         raise HTTPException(status_code=400, detail="Failed to extract text from PDF.")
     
     # Vectorize
     doc_id = str(uuid.uuid4())
     try:
         build_index_from_text(doc_id, text_content)
+        logger.info("Vectorization successful")
     except Exception as e:
+        logger.error("Vectorization failed")
         raise HTTPException(status_code=500, detail=f"Vectorization failed: {str(e)}")
     
     new_document = add_document(doc_id, file.filename, cloudinary_url)
+    logger.info("File metadata stored in database")
     return {
         "id": doc_id,
         "filename": file.filename,
