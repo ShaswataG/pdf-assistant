@@ -8,6 +8,7 @@ from app.llm_utils import get_answer_once, get_answer_stream, build_index_from_t
 import uuid
 import cloudinary.uploader
 from datetime import datetime
+import logging
 
 app = FastAPI()
 
@@ -17,7 +18,6 @@ origins = [
     "http://localhost:5173",
     "http://localhost:5174",
     "https://shaswatag.github.io",
-    # add other origins you want to allow
 ]
 
 app.add_middleware(
@@ -27,6 +27,23 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,  # Set the log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
+    handlers=[
+        logging.StreamHandler(),  # Log to console
+        logging.FileHandler("app.log")  # Log to a file
+    ]
+)
+
+logger = logging.getLogger("pdf-assistant")
+
+@app.get("/")
+async def root():
+    logger.info("Root endpoint was accessed.")
+    return {"message": "Hello, World!"}
 
 @app.get("/documents")
 async def getDocuments():
