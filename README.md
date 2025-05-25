@@ -154,7 +154,7 @@ This full-stack application allows users to upload PDF documents, extract their 
   ```json
   {
     "doc_id": "document-uuid",
-    "question": "Your question here",
+    "question": "Your question here"
   }
 - **Response:**
 
