@@ -55,8 +55,8 @@ def build_index_from_text(document_id: str, document_text: str):
     )
     logger.info("TogetherLLM instantiated")
 
-    embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-#     embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en")
+#     embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en")
     logger.info("model created")
 
     # service_context = ServiceContext.from_defaults(
