@@ -37,19 +37,24 @@ This full-stack application allows users to upload PDF documents, extract their 
     git clone https://github.com/ShaswataG/pdf-assistant.git
     cd pdf-assistant
     ```
+    
+2. Navigate to the server directory:
+    ```bash
+    cd server
+    ```
 
-2. Create a virtual environment:
+3. Create a virtual environment:
     ```bash
     python -m venv venv
     source venv/bin/activate   # On Windows: .venv\Scripts\Activate.ps1
     ```
 
-3. Install dependencies:
+4. Install dependencies:
     ```bash
     pip install -r requirements.txt
     ```
 
-4. Create a `.env` file in the `/server` directory with the following:
+5. Create a `.env` file in the `/server` directory with the following:
     ```
     TOGETHER_API_KEY=your_together_ai_api_key_here
     CLOUDINARY_CLOUD_NAME=your_cloud_name
@@ -57,12 +62,12 @@ This full-stack application allows users to upload PDF documents, extract their 
     CLOUDINARY_API_SECRET=your_api_secret
     ```
 
-5. Run the backend:
+6. Run the backend:
     ```bash
     uvicorn app.main:app --reload
     ```
 
-6. API will be available at: [http://localhost:8000](http://localhost:8000)
+7. API will be available at: [http://localhost:8000](http://localhost:8000)
 
 ---
 
@@ -85,7 +90,7 @@ This full-stack application allows users to upload PDF documents, extract their 
     npm install
     ```
 
-3. Create a `.env` file in the root of the frontend directory:
+3. Create a `.env` file in the root of the client directory:
     ```
     VITE_API_URL=http://localhost:8000
     ```
