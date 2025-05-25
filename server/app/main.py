@@ -60,7 +60,7 @@ async def upload_pdf(file: UploadFile = File(...)):
     try:
         original_filename = file.filename.rsplit(".", 1)[0]  # strip .pdf extension
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        public_id = f"{original_filename}_{timestamp}"
+        public_id = f"{original_filename}_{timestamp}.pdf"
 
         upload_result = cloudinary.uploader.upload(
             file_bytes,
