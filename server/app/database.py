@@ -2,7 +2,11 @@ import sqlite3
 from datetime import datetime
 from typing import Optional, List, Dict
 
-DB_FILE = "database.db"
+# get the DB file path from environment, default to ./db/data.db
+DB_DIR = os.getenv("DB_DIR", "./db")
+os.makedirs(DB_DIR, exist_ok=True)
+
+DB_FILE = os.path.join(DB_DIR, "database.db")
 
 def create_tables():
     with sqlite3.connect(DB_FILE) as conn:
