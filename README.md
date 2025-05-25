@@ -155,7 +155,6 @@ This full-stack application allows users to upload PDF documents, extract their 
   {
     "doc_id": "document-uuid",
     "question": "Your question here",
-    "stream": false    // Optional boolean, if true returns streaming response
   }
 - **Response:**
 
@@ -218,8 +217,6 @@ This full-stack application allows users to upload PDF documents, extract their 
 
 ## Notes
 - All timestamps are in UTC and ISO 8601 format.
-
-- The stream parameter in /ask is optional; by default, responses are non-streaming.
 
 - Uploaded PDFs are stored with a unique UUID.
 
