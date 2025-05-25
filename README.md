@@ -2,7 +2,7 @@
 
 ## Overview
 
-This full-stack application allows users to upload PDF documents, extract their text, and ask questions about the content using a large language model (LLM). It supports chat history, document indexing, and both streaming/non-streaming LLM responses.
+This full-stack application allows users to upload PDF documents, extract their text, and ask questions about the content using a large language model (LLM). It supports chat history, document indexing, and LLM response.
 
 ---
 
@@ -157,7 +157,7 @@ This full-stack application allows users to upload PDF documents, extract their 
     "question": "Your question here",
     "stream": false    // Optional boolean, if true returns streaming response
   }
-- **Response (Non-Streaming):**
+- **Response:**
 
   ```json
   {
@@ -180,8 +180,6 @@ This full-stack application allows users to upload PDF documents, extract their 
     }
   }
   ```
-- **Response (Streaming):**
-Returns a stream of text chunks as the AI generates the answer.
 
 - **Errors:**
 404 Not Found if the document ID does not exist.
