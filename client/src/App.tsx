@@ -1,10 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import './App.css' 
-import Layout from './components/layout/document';
-import DocumentPage from './pages/Document';
-import Navbar from './components/custom/Navbar';
-import { useDocumentStore } from './stores/documentStore';
 import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import Layout from '@/components/layout/Layout';
+import DocumentPage from '@/pages/Document';
+import Navbar from '@/components/custom/Navbar';
+import { useDocumentStore } from '@/stores/documentStore';
+import './App.css'
 
 function App() {
   const { documentsByUser, getDocuments } = useDocumentStore();
@@ -12,7 +12,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch documents on initial load
+    // fetch documents on initial load
     const fetchData = async () => {
       await getDocuments();
       setIsLoading(false);
@@ -21,7 +21,7 @@ function App() {
   }, [getDocuments]);
 
   useEffect(() => {
-    // Determine the redirect path based on documentsByUser
+    // determine the redirect path based on documentsByUser
     if (!isLoading) {
       if (documentsByUser.length > 0) {
         setRedirectPath(`/document/${documentsByUser[0].id}`);
@@ -32,7 +32,7 @@ function App() {
   }, [documentsByUser, isLoading]);
 
   if (isLoading) {
-    return <div>Loading...</div>; // Show a loading indicator while fetching data
+    return <div>Loading...</div>; // show loader while fetching data
   }
 
   return (

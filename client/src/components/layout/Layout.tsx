@@ -1,6 +1,6 @@
 import { useEffect } from "react"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/custom/app-sidebar"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/Sidebar"
+import { AppSidebar } from "@/components/custom/AppSidebar"
 import { useDocumentStore } from "@/stores/documentStore"
 
 export default function Layout({ children }: { children: React.ReactNode }) {

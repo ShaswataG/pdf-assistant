@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
-import { Button } from '../ui/button';
-import { Loader2, CirclePlus } from 'lucide-react'; // Spinner icon
 import { useNavigate } from 'react-router-dom';
+import { Loader2, CirclePlus } from 'lucide-react'; // Spinner icon
+import { Button } from '@/components/ui/Button';
 import { useDocumentStore } from '@/stores/documentStore';
 import navbarLogo from "@/assets/navbarLogo.png";
 

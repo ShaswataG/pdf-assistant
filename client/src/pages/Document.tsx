@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/Textarea"
+import { Button } from "@/components/ui/Button";
 import { SendHorizontal, RotateCcw, Loader2 } from 'lucide-react';
 import { useChatStore } from "@/stores/chatStore";
 import { useEffect, useState, useRef } from "react";

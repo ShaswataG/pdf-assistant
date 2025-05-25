@@ -7,7 +7,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/Sidebar"
 
 import { useDocumentStore } from "@/stores/documentStore"
 import { useParams } from "react-router-dom"
