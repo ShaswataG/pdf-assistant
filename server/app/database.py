@@ -1,8 +1,9 @@
+import os
 import sqlite3
 from datetime import datetime
 from typing import Optional, List, Dict
 
-# get the DB file path from environment, default to ./db/data.db
+# get the DB file path from environment, default to ./db/database.db
 DB_DIR = os.getenv("DB_DIR", "./db")
 os.makedirs(DB_DIR, exist_ok=True)
 
