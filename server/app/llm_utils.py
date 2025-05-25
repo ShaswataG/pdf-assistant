@@ -39,33 +39,40 @@ if not TOGETHER_API_KEY:
 # Setup a basic in-memory index cache
 index_cache = {}
 
+logger = logging.getLogger("pdf-assistant")
 
 # === 1. Build index from PDF text ===
 def build_index_from_text(document_id: str, document_text: str):
     # Create index for the text using LlamaIndex
     # print('building index')
+    logger.info("build_index_from_text called")
 
     together_llm = TogetherLLM(
         api_key=TOGETHER_API_KEY,
         model="mistralai/Mistral-7B-Instruct-v0.1",
         temperature=0
     )
+    logger.info("TogetherLLM instantiated")
 
     embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en")  # Free, local embedding model
+    logger.info("model created")
 
     # service_context = ServiceContext.from_defaults(
     #     llm=LlamaOpenAI(api_key=OPENAI_API_KEY, model="gpt-3.5-turbo", temperature=0)
     # )
 
     service_context = ServiceContext.from_defaults(llm=together_llm, embed_model=embed_model)
+    logger.info("service_context created")
 
     documents = [Document(text=document_text)]
     index = VectorStoreIndex.from_documents(
         documents,
         service_context=service_context
     )
-    # print('index built')
+    logger.info("vector index built")
+
     index_cache[document_id] = index
+    logger.info("vector index cached")
     return index
 
 
