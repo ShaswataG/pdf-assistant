@@ -133,7 +133,7 @@ This full-stack application allows users to upload PDF documents, extract their 
     "id": "generated-uuid",
     "filename": "uploaded_file.pdf",
     "upload_date": "2023-01-01T12:00:00Z",
-    "content": "Extracted text content from the PDF..."
+    "cloudinary_url": "https://res.cloudinary.com/..."
   }
   ```
 - **Errors:**
