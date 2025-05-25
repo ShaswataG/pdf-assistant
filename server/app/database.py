@@ -99,9 +99,9 @@ def get_document(doc_id: str) -> Optional[Dict]:
 def list_documents() -> List[Dict]:
     with sqlite3.connect(DB_FILE) as conn:
         c = conn.cursor()
-        c.execute("SELECT id, filename, upload_date FROM documents ORDER BY upload_date DESC")
+        c.execute("SELECT id, filename, upload_date, cloudinary_url FROM documents ORDER BY upload_date DESC")
         rows = c.fetchall()
-        return [{"id": r[0], "filename": r[1], "upload_date": r[2]} for r in rows]
+        return [{"id": r[0], "filename": r[1], "upload_date": r[2], "cloudinary_url": r[3]} for r in rows]
 
 # Initialize tables on module import
 create_tables()

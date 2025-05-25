@@ -63,7 +63,7 @@ export const useDocumentStore = create<DocumentStore>()(
                 try {
                     const response = await fetchDocumentsByUser(); // call your API
                     console.log('response: ', response)
-                    set({ documentsByUser: response.data?.documents?.map((doc: any) => { return { id: doc.id, filename: doc.filename, uploadDate: doc.upload_date } }) });
+                    set({ documentsByUser: response.data?.documents?.map((doc: any) => { return { id: doc.id, filename: doc.filename, uploadDate: doc.upload_date, url: doc.cloudinary_url } }) });
                 } catch (error) {
                     console.error("Failed to fetch documents:", error);
                 }
