@@ -38,7 +38,7 @@ async def upload_pdf(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Only PDF files are supported.")
     file_bytes = await file.read()
 
-    # Upload to Cloudinary in specific folder with timestamp in filename
+    # upload to Cloudinary in specific folder with timestamp in filename
     try:
         original_filename = file.filename.rsplit(".", 1)[0]  # strip .pdf extension
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -54,7 +54,7 @@ async def upload_pdf(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Cloudinary upload failed: {str(e)}")
 
-    # Extract text
+    # extract text
     try:
         text_content = extract_text_from_pdf(file_bytes)
     except Exception as e:
@@ -63,7 +63,7 @@ async def upload_pdf(file: UploadFile = File(...)):
     if not text_content.strip():
         raise HTTPException(status_code=400, detail="Failed to extract text from PDF.")
     
-    # Vectorize
+    # vectorize
     doc_id = str(uuid.uuid4())
     try:
         build_index_from_text(doc_id, text_content)
@@ -86,24 +86,20 @@ async def ask_question(request: Request):
     stream = body.get("stream", False)
 
     doc = get_document(doc_id)
-    # print('doc', doc)
     if not doc:
-        # print('doc not found')
         raise HTTPException(status_code=404, detail="Document not found")
 
-    # Store the user's question and get the inserted chat entry
+    # store question and get the inserted chat entry
     user_chat = add_chat(doc_id, None, question, is_user_message=True)
 
     if stream:
-        # print('stream', stream)
         async def token_generator():
             async for chunk in get_answer_stream(doc_id, question):
                 yield chunk
         return StreamingResponse(token_generator(), media_type="text/plain")
     else:
-        # print('stream not found')
         answer = get_answer_once(doc_id, question)
-        # Store the AI's response and get the inserted chat entry
+        # store AI's response and get the inserted chat entry
         ai_chat = add_chat(doc_id, None, answer, is_user_message=False)
         return {"answer": answer, "user_chat": user_chat, "ai_chat": ai_chat}
 

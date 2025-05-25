@@ -36,10 +36,10 @@ def add_chat(doc_id: str, user_id: Optional[str], content: str, is_user_message:
             "INSERT INTO chats (doc_id, user_id, content, is_user_message, timestamp) VALUES (?, ?, ?, ?, ?)",
             (doc_id, user_id, content, is_user_message, timestamp)
         )
-        # Get the ID of the newly inserted row
+        # get id of newly inserted row
         chat_id = c.lastrowid
         conn.commit()
-        # Return the newly inserted chat entry
+        # return newly inserted chat entry
         return {
             "id": chat_id,
             "doc_id": doc_id,
@@ -103,5 +103,5 @@ def list_documents() -> List[Dict]:
         rows = c.fetchall()
         return [{"id": r[0], "filename": r[1], "upload_date": r[2], "cloudinary_url": r[3]} for r in rows]
 
-# Initialize tables on module import
+# initialize tables on module import
 create_tables()
