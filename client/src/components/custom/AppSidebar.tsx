@@ -29,7 +29,7 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton asChild className={`${item.id === docId ? 'bg-[#949494] text-[white] ' : ''}`}>
-                    <a href={item.id}>
+                    <a href={`#/document/${item.id}`}>
                       <span>{item.filename}</span>
                     </a>
                   </SidebarMenuButton>
