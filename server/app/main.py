@@ -129,7 +129,7 @@ async def ask_question(request: Request):
     else:
         # print('stream not found')
         answer = get_answer_once(doc_id, question)
-        # Store the AI's response and get the inserted chat entry
+        # store the AI's response and get the inserted chat entry
         ai_chat = add_chat(doc_id, None, answer, is_user_message=False)
         return {"answer": answer, "user_chat": user_chat, "ai_chat": ai_chat}
 
