@@ -44,26 +44,14 @@ logger = logging.getLogger("pdf-assistant")
 
 # === 1. Build index from PDF text ===
 def build_index_from_text(document_id: str, document_text: str):
-    # Create index for the text using LlamaIndex
-    # print('building index')
     logger.info("build_index_from_text called")
 
-    together_llm = TogetherLLM(
-        api_key=TOGETHER_API_KEY,
-        model="mistralai/Mistral-7B-Instruct-v0.1",
-        temperature=0
-    )
-    logger.info("TogetherLLM instantiated")
-
-#     embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    # Only create the embedding model
     embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en")
-    logger.info("model created")
+    logger.info("embedding model created")
 
-    # service_context = ServiceContext.from_defaults(
-    #     llm=LlamaOpenAI(api_key=OPENAI_API_KEY, model="gpt-3.5-turbo", temperature=0)
-    # )
-
-    service_context = ServiceContext.from_defaults(llm=together_llm, embed_model=embed_model)
+    # Create service context with only the embedding model
+    service_context = ServiceContext.from_defaults(embed_model=embed_model)
     logger.info("service_context created")
 
     documents = [Document(text=document_text)]
