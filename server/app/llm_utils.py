@@ -63,6 +63,7 @@ def build_index_from_text(document_id: str, document_text: str):
 
     index_cache[document_id] = index
     logger.info("vector index cached")
+    print('index_cache', index_cache)
     return index
 
 
@@ -80,7 +81,10 @@ def get_context_from_index(document_id: str, question: str) -> str:
 # === 3. LangChain prompt-based LLM call (non-streaming) ===
 def get_answer_once(document_id: str, question: str) -> str:
     # check if index exists in cache
+    print('index_cache', index_cache)
+    print('document_id', document_id)
     index = index_cache.get(document_id)
+    print('index', index)
     if not index:
         # Fetch document from database
         doc = get_document(document_id)
