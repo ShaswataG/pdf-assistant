@@ -63,7 +63,6 @@ def build_index_from_text(document_id: str, document_text: str):
 
     index_cache[document_id] = index
     logger.info("vector index cached")
-    print('index_cache', index_cache)
     return index
 
 
@@ -81,18 +80,14 @@ def get_context_from_index(document_id: str, question: str) -> str:
 # === 3. LangChain prompt-based LLM call (non-streaming) ===
 def get_answer_once(document_id: str, question: str) -> str:
     # check if index exists in cache
-    print('index_cache', index_cache)
-    print('document_id', document_id)
     index = index_cache.get(document_id)
-    print('index', index)
     if not index:
         # Fetch document from database
         doc = get_document(document_id)
         if not doc:
             raise ValueError("Document not found in database.")
         
-        # download pdf from cloudinary URL
-        print('cloudinary_url', doc['cloudinary_url'])
+        # download pdf from cloudinary URL]
         response = requests.get(doc["cloudinary_url"])
         if response.status_code != 200:
             raise ValueError("Failed to download PDF from Cloudinary.")
@@ -104,7 +99,7 @@ def get_answer_once(document_id: str, question: str) -> str:
         index = build_index_from_text(document_id, text_content)
         index_cache[document_id] = index
     else:
-        print('index found in cache')
+        logger.info('index found in cache')
 
     # get context
     context = get_context_from_index(document_id, question)
